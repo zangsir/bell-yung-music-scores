@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f7f5f0">
+  <title>The Bell Yung Score Library</title>
+  <meta name="description" content="A searchable, editable library of musical score photographs shared by Prof. Bell Yung.">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div id="app">
+    <header class="masthead">
+      <div class="masthead-inner">
+        <a class="brand" href="./" aria-label="The Bell Yung Score Library home">
+          <span class="brand-mark treble-mark" aria-hidden="true">𝄞</span>
+          <span><strong>THE BELL YUNG</strong><small>SCORE LIBRARY</small></span>
+        </a>
+        <div class="top-actions">
+          <span class="local-pill"><span class="pulse-dot"></span> PUBLIC GALLERY</span>
+          <button id="trash-btn" class="ghost-btn" aria-label="Open deleted records">Trash (0)</button>
+          <button id="add-record" class="ghost-btn">+ New record</button>
+          <button id="export-btn" class="outline-btn" aria-haspopup="true" aria-expanded="false">Export <span aria-hidden="true">⌄</span></button>
+          <div id="export-menu" class="export-menu" hidden>
+            <button type="button" id="export-csv">Download CSV spreadsheet</button>
+            <button type="button" id="export-json">Download catalog.json</button>
+            <button type="button" id="import-json">Import JSON backup</button>
+            <button type="button" id="reset-edits">Discard browser edits</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="intro">
+        <div>
+          <p class="eyebrow">A PERSONAL MUSIC LIBRARY <span class="tiny-diamond">◆</span> FIRST INVENTORY</p>
+          <h1>Music to preserve.<br><em>Stories to discover.</em></h1>
+          <p class="intro-copy">A growing catalog of printed music shared by <strong>Prof. Bell Yung</strong>. Browse the photographed covers, discover the history behind the music through curated reading links, and document each physical score as the collection takes shape.</p>
+        </div>
+        <div class="intro-side">
+          <div class="quote-line">“Every score has a history.”</div>
+          <div class="decor-lines"><span></span><span></span><span></span><span></span><span></span></div>
+          <span class="collection-label">Collection inventory · November 2026</span>
+        </div>
+      </section>
+
+      <div class="edit-notice" role="note"><strong>GitHub Pages edition.</strong> Everyone can browse the published catalog. Edits and deletions you make here stay in <em>your browser</em> until you export <code>catalog.json</code> and commit it to the GitHub repository. <a href="help.html">How publishing works</a><span id="local-edit-count" aria-live="polite"></span></div>
+
+      <section class="statistics" aria-label="Collection summary">
+        <div class="stat"><span class="stat-number" id="stat-total">—</span><span class="stat-label">PHOTOGRAPHS</span></div>
+        <div class="stat"><span class="stat-number" id="stat-scores">—</span><span class="stat-label">SCORE COVERS</span></div>
+        <div class="stat"><span class="stat-number" id="stat-composers">—</span><span class="stat-label">COMPOSERS</span></div>
+        <div class="stat"><span class="stat-number" id="stat-attention">—</span><span class="stat-label">NEED REVIEW</span></div>
+        <div class="stat"><span class="stat-number" id="stat-cataloged">—</span><span class="stat-label">SHELVED</span></div>
+      </section>
+
+      <section class="workspace">
+        <aside class="sidebar" aria-label="Filters">
+          <div class="sidebar-heading"><h2>Discover</h2><button class="reset-link" id="clear-filters">Clear all</button></div>
+          <h3>Material</h3>
+          <div class="sidebar-group" id="type-filters"></div>
+          <div class="rule"></div>
+          <h3>Composer <span id="composer-count"></span></h3>
+          <div class="sidebar-group composer-group" id="composer-filters"></div>
+          <div class="rule"></div>
+          <h3>Cataloging status</h3>
+          <div class="sidebar-group" id="status-filters"></div>
+          <div class="aside-note"><strong>About these records</strong><p>Names and edition details have been transcribed from cover photos, not verified against publisher catalogs. Original photos and archive IDs are preserved. Unknown information is left blank.</p></div>
+        </aside>
+
+        <div class="catalog-main">
+          <div class="catalog-head"><div><p class="eyebrow small-eye">COLLECTION INDEX</p><h2>Browse the scores</h2></div><span class="results-number" id="results-number">Loading…</span></div>
+          <div class="toolbar">
+            <label class="search-wrap"><span aria-hidden="true">⌕</span><input id="search-input" type="search" placeholder="Search title, composer, publisher, ID…" autocomplete="off" aria-label="Search catalog"></label>
+            <div class="toolbar-right"><select id="sort-select" aria-label="Sort scores"><option value="id">Archive ID</option><option value="composer">Composer A–Z</option><option value="title">Title A–Z</option><option value="recent">Recently updated</option></select><div class="view-switch" role="group" aria-label="Display mode"><button id="grid-button" class="active" title="Grid view" aria-label="Grid view">▦</button><button id="list-button" title="List view" aria-label="List view">☷</button></div></div>
+          </div>
+          <div id="catalog-grid" class="catalog-grid" aria-live="polite"></div>
+          <div id="empty-state" class="empty-state" hidden><div class="empty-ornament">♫</div><h3>No matching scores</h3><p>Try another title, composer, or collection filter.</p><button class="outline-btn" id="empty-reset">Reset filters</button></div>
+          <footer class="catalog-footer"><span>CATALOG IDS ARE PERMANENT · DELETED RECORDS CAN BE RESTORED</span><span id="footer-count"></span></footer>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><div><span class="brand-footer treble-footer" aria-hidden="true">𝄞</span> THE BELL YUNG SCORE LIBRARY</div><div>GitHub Pages compatible · Changes require a GitHub commit to become public · <a href="help.html">Help &amp; instructions</a></div></footer>
+  </div>
+  <div id="dialog-backdrop" class="dialog-backdrop" hidden><section id="detail-dialog" role="dialog" aria-modal="true" aria-label="Score details" tabindex="-1"></section></div>
+  <input type="file" id="import-file" accept="application/json,.json" hidden>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
